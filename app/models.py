@@ -2,45 +2,45 @@ from django.db import models
 
 
 class Branch(models.Model):
-    id = models.TextField(primary_key=True)
-    university = models.TextField()
-    branch = models.TextField()
+    id = models.CharField(max_length=255, primary_key=True, db_index=False)
+    university = models.CharField(max_length=255)
+    branch = models.CharField(max_length=255)
 
     def __str__(self):
         return f"{self.university} - {self.branch}"
 
 class Subject(models.Model):
-    id = models.TextField(primary_key=True)
-    year = models.TextField()
-    semester = models.TextField()
-    name = models.TextField()
-    code = models.TextField()
-    branches = models.ManyToManyField('Branch', through='SubjectBranch')
+    id = models.CharField(max_length=255, primary_key=True, db_index=False)
+    year = models.CharField(max_length=255)
+    semester = models.CharField(max_length=255)
+    name = models.CharField(max_length=255)
+    code = models.CharField(max_length=255)
+    branches = models.ManyToManyField(Branch)
 
     def __str__(self):
         return self.name
 
 class College(models.Model):
-    id = models.TextField(primary_key=True)
-    password = models.TextField()
+    id = models.CharField(max_length=255, primary_key=True, db_index=False)
+    password =models.CharField(max_length=255)
     #from form
-    email=models.TextField()
-    name = models.TextField()
-    code=models.TextField(unique=True)
-    principal=models.TextField()
-    mobile = models.TextField()
-    role = models.TextField()
-    address=models.TextField()
-    state=models.TextField()
-    city=models.TextField()
-    pincode=models.TextField()
-    affiliation=models.TextField()
-    website=models.TextField()
+    email=models.CharField(max_length=255)
+    name = models.CharField(max_length=255)
+    code = models.CharField(max_length=255, unique=True)
+    principal=models.CharField(max_length=255)
+    mobile = models.CharField(max_length=255)
+    role = models.CharField(max_length=255)
+    address=models.CharField(max_length=255)
+    state=models.CharField(max_length=255)
+    city=models.CharField(max_length=255)
+    pincode=models.CharField(max_length=255)
+    affiliation=models.CharField(max_length=255)
+    website=models.CharField(max_length=255)
     image = models.FileField(null=True, blank=True)
     #auto set
-    status=models.TextField()
-    payment=models.TextField()
-    branches = models.ManyToManyField(Branch, through='CollegeBranch')
+    status=models.CharField(max_length=255)
+    payment=models.CharField(max_length=255)
+    branches = models.ManyToManyField(Branch)
 
     #17
    
@@ -48,34 +48,13 @@ class College(models.Model):
         return self.name
 
 class Adminstartor(models.Model):
-    id = models.TextField(primary_key=True)
-    email=models.TextField()
-    password = models.TextField()
-    name = models.TextField()
-    mobile = models.TextField()
-    role = models.TextField()
+    id = models.CharField(max_length=255, primary_key=True, db_index=False)
+    email=models.CharField(max_length=255)
+    password = models.CharField(max_length=255)
+    name = models.CharField(max_length=255)
+    mobile = models.CharField(max_length=255)
+    role = models.CharField(max_length=255)
     image = models.FileField(null=True, blank=True)
     def __str__(self):
         return self.name
  
-
-class CollegeBranch(models.Model):
-    college = models.ForeignKey(College, on_delete=models.CASCADE)
-    branch = models.ForeignKey(Branch, on_delete=models.CASCADE)
-
-    class Meta:
-        unique_together = ('college', 'branch')
-
-    def __str__(self):
-        return f"{self.college.name} - {self.branch.branch}"
-    
-class SubjectBranch(models.Model):
-    subject = models.ForeignKey('Subject', on_delete=models.CASCADE)
-    branch = models.ForeignKey('Branch', on_delete=models.CASCADE)
-
-    class Meta:
-        unique_together = ('subject', 'branch')
-
-    def __str__(self):
-        return f"{self.subject.name} - {self.branch.branch}"
-  
