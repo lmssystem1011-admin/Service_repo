@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>College Registration</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background-image: url("https://smartcampuses.com/wp-content/uploads/revslider/web-agency-home-content/Slide-2-Background.jpg");
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    .container {
+      max-width: 900px;
+    }
+    .check-icon {
+      font-size: 60px;
+      color: #28a745;
+    }
+    .modal-content {
+      border-radius: 20px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.1);
+      padding: 30px;
+    }
+    #ok {
+      width: 80px;
+      margin: 0 auto;
+    }
+    #check {
+      font-size: 100px;
+    }
+    .custom-navbar {
+      background-color: #03415b;
+      padding: 4px 10px;
+      font-size: 0.9rem;
+      min-height: 50px;
+    }
+    .custom-navbar .navbar-brand {
+      font-size: 1.1rem;
+      padding: 2px 0;
+    }
+    .small-nav .nav-link {
+      color: #fff;
+      padding: 4px 10px;
+      margin: 0 3px;
+      transition: 0.2s ease-in-out;
+    }
+    .small-nav .nav-link:hover,
+    .small-nav .nav-link.active {
+      background-color: rgba(255, 255, 255, 0.15);
+      border-radius: 4px;
+    }
+    .logout-link:hover {
+      background-color: rgba(255, 0, 0, 0.2);
+    }
+  </style>
+</head>
+<body>
+  {% block start %}
+
+<nav class="navbar navbar-expand-lg custom-navbar">
+  <div class="container-fluid px-3">
+    <a class="navbar-brand fw-bold text-white" href="#">LMS Portal</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto small-nav">
+        <li class="nav-item"><a class="nav-link text-white" href="/admin_dash/">Dashboard</a></li>
+        <li class="nav-item"><a class="nav-link text-white" href="#">Settings</a></li>
+        <li class="nav-item"><a class="nav-link text-white logout-link" href="/login/">Logout</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<div class="container bg-white p-4 mt-4 shadow rounded">
+  <h2 class="mb-4 text-center">College Registration Form</h2>
+  <form id="registrationForm" method="post">
+    {%csrf_token%}
+    <div class="row g-3">
+      <div class="col-md-6">
+        <label for="collegeName" class="form-label">College Name</label>
+        <input type="text" class="form-control" name="name" required>
+      </div>
+      <div class="col-md-6">
+        <label for="collegeCode" class="form-label">College Code</label>
+        <input type="text" class="form-control" name="code" required>
+      </div>
+      <div class="col-12">
+        <label for="address" class="form-label">Address</label>
+        <textarea class="form-control" name="address" rows="2" required></textarea>
+      </div>
+      <div class="col-md-4">
+        <label for="state" class="form-label">State</label>
+        <input type="text" class="form-control" name="state" required>
+      </div>
+      <div class="col-md-4">
+        <label for="city" class="form-label">City</label>
+        <input type="text" class="form-control" name="city" required>
+      </div>
+      <div class="col-md-4">
+        <label for="pincode" class="form-label">Pincode</label>
+        <input type="text" class="form-control" name="pincode" required>
+      </div>
+       <div class="col-md-4">
+        <label for="role" class="form-label">Role</label>
+        <input type="text" class="form-control" name="role" required>
+      </div>
+      <div class="col-md-6">
+        <label for="email" class="form-label">College Email</label>
+        <input type="email" class="form-control" name="email" required>
+      </div>
+      <div class="col-md-6">
+        <label for="phone" class="form-label">Contact Number</label>
+        <input type="tel" class="form-control" name="phone" required>
+      </div>
+      <div class="col-md-6">
+        <label for="affiliation" class="form-label">Affiliation</label>
+        <input type="text" class="form-control" name="affiliation" required>
+      </div>
+      <div class="col-md-6">
+        <label for="principal" class="form-label">Principal Name</label>
+        <input type="text" class="form-control" name="principal" required>
+      </div>
+      <div class="col-md-6">
+        <label for="website" class="form-label">Website</label>
+        <input type="url" class="form-control" name="website">
+      </div>
+      <div class="col-md-6">
+        <label for="university" class="form-label">Select University</label>
+        <select class="form-select" name ="university" id="university" onchange=get_branches()>
+          <option selected disabled>-- Select a Branch --</option>
+        </select>
+      </div>
+      <div class="col-md-6">
+        <label for="branchSelect" class="form-label">Select Branch</label>
+        <select class="form-select" name="branchSelect" id="branchSelect">
+          <option selected disabled>-- Select a Branch --</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Branch Table -->
+    <div class="mt-4">
+      <h5>Selected Branches</h5>
+      <table class="table table-bordered table-striped">
+        <thead class="table-light">
+          <tr>
+            <th>Sr. No.</th>
+            <th>Branch Name</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody name ="branchTableBody" id="branchTableBody"></tbody>
+      </table>
+    </div>
+
+    <div class="text-center mt-4">
+      <button type="submit" class="btn btn-primary px-5">Register</button>
+    </div>
+  </form>
+</div>
+
+<!-- Success Modal -->
+<div class="modal fade" id="registrationSuccessModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content text-center">
+      <div class="check-icon mb-3">
+        <i class="bi bi-check-circle-fill" id="check"></i>
+      </div>
+      <h4 class="mb-2">Registration Successful!</h4>
+      <p class="text-muted mb-3">Your college registration has been completed successfully.</p>
+      <button type="button" class="btn btn-success rounded-pill px-4" id="ok" data-bs-dismiss="modal">OK</button>
+    </div>
+  </div>
+</div>
+
+<!-- Bootstrap Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+
+
+
+
+<!-- Modal & Branch Logic -->
+<script>
+  let srNo = 1;
+
+  document.getElementById("branchSelect").addEventListener("change", function () {
+    const branch = this.value;
+    const table = document.getElementById("branchTableBody");
+
+    const exists = Array.from(table.querySelectorAll("td:nth-child(2)"))
+      .some(cell => cell.textContent === branch);
+    if (exists) return;
+
+    const row = document.createElement("tr");
+    row.innerHTML = `
+      <td>${srNo++}</td>
+      <td>${branch}</td>
+      <td><button class="btn btn-danger btn-sm delete-btn">Delete</button></td>
+    `;
+    table.appendChild(row);
+    this.selectedIndex = 0;
+  });
+
+  document.getElementById("branchTableBody").addEventListener("click", function (e) {
+    if (e.target.classList.contains("delete-btn")) {
+      const row = e.target.closest("tr");
+      row.remove();
+      updateSrNo();
+    }
+  });
+
+  function updateSrNo() {
+    const rows = document.querySelectorAll("#branchTableBody tr");
+    srNo = 1;
+    rows.forEach(row => {
+      row.children[0].textContent = srNo++;
+    });
+  }
+document.getElementById("registrationForm").addEventListener("submit", function (e) {
+  e.preventDefault();  // Prevent form from reloading page
+
+  const form = e.target;
+  const formData = new FormData(form);
+
+  // 🔴 ADD THIS: Get selected branches from the table
+  const branches = [];
+  document.querySelectorAll("#branchTableBody tr").forEach(row => {
+    const branchName = row.cells[1]?.textContent.trim();
+    if (branchName) {
+      branches.push(branchName);
+    }
+  });
+
+  // 🔴 ADD THIS: Append to formData (as JSON string or repeated keys)
+  branches.forEach(branch => {
+    formData.append("branches[]", branch);
+  });
+
+  fetch(form.action, {
+    method: 'POST',
+    body: formData,
+    headers: {
+      'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+    }
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.success) {
+      const successModal = new bootstrap.Modal(document.getElementById('registrationSuccessModal'));
+      successModal.show();
+      form.reset(); // Clear form
+      document.getElementById("branchTableBody").innerHTML = "";
+      srNo = 1;
+    } else {
+      alert(data.error || "Something went wrong.");
+    }
+  })
+  .catch(error => {
+    console.error("Error submitting form:", error);
+  });
+});
+
+
+  // document.getElementById("registrationForm").addEventListener("submit", function (e) {
+  //   e.preventDefault();
+  //   const successModal = new bootstrap.Modal(document.getElementById('registrationSuccessModal'));
+  //   successModal.show();
+  //   this.reset();
+  //   document.getElementById("branchTableBody").innerHTML = "";
+  //   srNo = 1;
+  // });
+
+  document.addEventListener("DOMContentLoaded", function () {
+    updateUniversities(); 
+  });
+
+
+
+  function updateUniversities() {
+    const universitySelect = document.getElementById("university");
+    // Clear existing options and show loading message
+    universitySelect.innerHTML = "<option value=''>--Select University--</option>";
+    universitySelect.innerHTML += "<option disabled>Loading universities...</option>";
+
+    // Create a new XMLHttpRequest object
+    const xhr = new XMLHttpRequest();
+
+    // Configure it: GET-request to your Django endpoint
+    xhr.open('GET', '/get_universities/', true);
+
+    // Expect JSON response
+    xhr.responseType = 'json';
+
+    // Set up a function to handle the response
+    xhr.onload = function () {
+        universitySelect.innerHTML = "<option value=''>--Select University--</option>";
+
+        if (xhr.status >= 200 && xhr.status < 300) {
+            const data = xhr.response;
+
+            console.log("Received universities:", data);
+
+            if (data && data.length > 0) {
+                data.forEach(university => {
+                    const option = document.createElement("option");
+                    option.value = university;
+                    option.text = university;
+                    universitySelect.add(option);
+                });
+            } else {
+                universitySelect.innerHTML += "<option disabled>No universities found</option>";
+            }
+        } else {
+            console.error('Error fetching universities:', xhr.statusText);
+            universitySelect.innerHTML += "<option disabled>Error loading universities</option>";
+        }
+    };
+
+    // Handle network errors
+    xhr.onerror = function () {
+        console.error('Request failed');
+        universitySelect.innerHTML = "<option value=''>--Select University--</option>";
+        universitySelect.innerHTML += "<option disabled>Failed to load universities</option>";
+    };
+
+    // Send the request
+    xhr.send();
+}
+
+
+function get_branches() {
+    
+    const university = document.getElementById("university").value;
+    const branchSelect = document.getElementById("branchSelect");
+    console.log(university)
+    // Clear existing options and show loading message
+    branchSelect.innerHTML = "<option value=''>--Select Branch--</option>";
+    branchSelect.innerHTML += "<option disabled>Loading branches...</option>";
+
+    if (!university) {
+        branchSelect.innerHTML = "<option disabled>Please select a university first</option>";
+        return;
+    }
+
+    // Create a new XMLHttpRequest object
+    const xhr = new XMLHttpRequest();
+     console.log("p3")
+    // Configure it: GET-request to your Django endpoint with university as query parameter
+    xhr.open('GET', `/get_branches/?university=${encodeURIComponent(university)}`, true);
+    console.log("p4")
+    // Expect JSON response
+    xhr.responseType = 'json';
+
+    // Set up a function to handle the response
+    xhr.onload = function () {
+        branchSelect.innerHTML = "<option value=''>--Select Branch--</option>";
+
+        if (xhr.status >= 200 && xhr.status < 300) {
+            const data = xhr.response;
+
+            console.log("Received branches:", data);
+
+            if (data && data.length > 0) {
+                data.forEach(branch => {
+                    const option = document.createElement("option");
+                    option.value = branch;
+                    option.text = branch;
+                    branchSelect.add(option);
+                });
+            } else {
+                branchSelect.innerHTML += "<option disabled>No branches found</option>";
+            }
+        } else {
+            console.error('Error fetching branches:', xhr.statusText);
+            branchSelect.innerHTML += "<option disabled>Error loading branches</option>";
+        }
+    };
+
+    // Handle network errors
+    xhr.onerror = function () {
+        console.error('Request failed');
+        branchSelect.innerHTML = "<option value=''>--Select Branch--</option>";
+        branchSelect.innerHTML += "<option disabled>Failed to load branches</option>";
+    };
+
+    // Send the request
+    xhr.send();
+}
+
+
+
+
+</script>
+
+</body>
+{% endblock %}
+</html>
